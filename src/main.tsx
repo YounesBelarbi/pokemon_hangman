@@ -1,10 +1,13 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
+import { PokemonApiContextProvider } from "./hook/usePokemonApi.tsx";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <PokemonApiContextProvider>
+      <App />
+    </PokemonApiContextProvider>
   </StrictMode>
 );
