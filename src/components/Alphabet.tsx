@@ -1,0 +1,119 @@
+import { useCallback, useEffect, useState } from "react";
+
+interface Pokemon {
+  name: string;
+  image: string;
+}
+
+interface AlphabetProps {
+  // alreadyUsedLetters: string[];
+  // setAlreadyUsedLetters: React.Dispatch<React.SetStateAction<string[]>>;
+  setCorrectLetter: React.Dispatch<React.SetStateAction<string[]>>;
+  setWrongAttempts: React.Dispatch<React.SetStateAction<number>>;
+  openModal: () => void;
+  setModalMessage: React.Dispatch<React.SetStateAction<string | null>>;
+  setGameOver: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsGameWon: React.Dispatch<React.SetStateAction<boolean>>;
+  pokemon: Pokemon | null;
+  // isGameWon: boolean;
+}
+const Alphabet = ({
+  // alreadyUsedLetters,
+  // setAlreadyUsedLetters,
+  setCorrectLetter,
+  setWrongAttempts,
+  openModal,
+  setModalMessage,
+  setGameOver,
+  setIsGameWon,
+  pokemon,
+}: AlphabetProps) => {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const maxAttempts = 7;
+  const [alreadyUsedLetters, setAlreadyUsedLetters] = useState<string[]>([]);
+
+  const handleWrongAnswer = useCallback(() => {
+    setWrongAttempts((prev) => {
+      const nextValue = Math.min(prev + 1, maxAttempts);
+      if (nextValue === maxAttempts) {
+        setModalMessage("Trop de mauvaises réponses !");
+        setGameOver(true);
+        openModal();
+      }
+      return nextValue;
+    });
+  }, [maxAttempts, openModal, setGameOver, setModalMessage, setWrongAttempts]);
+
+  const handleLetterClick = useCallback(
+    (letter: string) => {
+      if (alreadyUsedLetters.includes(letter)) return;
+      setAlreadyUsedLetters((prev) => [...prev, letter]);
+      if (pokemon && pokemon.name.includes(letter)) {
+        setCorrectLetter((prev) => {
+          const updatedCorrectLetters = [...prev, letter];
+          const maskedWord = pokemon.name
+            .split("")
+            .map((l) => (updatedCorrectLetters.includes(l) ? l : "_"))
+            .join("");
+
+          if (!maskedWord.includes("_")) {
+            setModalMessage("Vous avez gagné !");
+            setIsGameWon(true);
+            openModal();
+          }
+
+          return updatedCorrectLetters;
+        });
+        // if (!getMaskedWord().includes("_")) {
+        //   setModalMessage("Vous avez gagné !");
+        //   setIsGameWon(true);
+        //   openModal();
+        // }
+      } else {
+        handleWrongAnswer();
+      }
+    },
+    [
+      alreadyUsedLetters,
+      pokemon,
+      handleWrongAnswer,
+      openModal,
+      setIsGameWon,
+      setModalMessage,
+    ]
+  );
+
+  const handleKeypress = useCallback(
+    (event: KeyboardEvent) => {
+      const letter = event.key.toUpperCase();
+      if (alphabet.includes(letter)) {
+        handleLetterClick(letter);
+      }
+    },
+    [handleLetterClick, alphabet]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keypress", handleKeypress);
+    return () => document.removeEventListener("keypress", handleKeypress);
+  }, [handleKeypress]);
+
+  return (
+    <div className="grid grid-cols-6 gap-2 mt-4">
+      {alphabet.map((letter) => (
+        <button
+          key={letter}
+          onClick={() => handleLetterClick(letter)}
+          disabled={alreadyUsedLetters?.includes(letter)}
+          className={`h-10 w-full rounded bg-emerald-500 text-white transition duration-300 hover:bg-emerald-600 focus:outline-none disabled:bg-emerald-100  ${
+            alreadyUsedLetters?.includes(letter) ? "text-gray-300" : ""
+          }`}
+        >
+          {letter}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+export default Alphabet;
