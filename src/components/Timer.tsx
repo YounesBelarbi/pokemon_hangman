@@ -1,18 +1,23 @@
 import { useEffect, useState } from "react";
 
 const Timer = ({
-  handleTimeFinished,
-  isGameOver,
-  isGameWon,
+  gameOver,
+  setModalMessage,
+  openModal,
+  setGameOver,
 }: {
-  handleTimeFinished: () => void;
-  isGameOver: boolean;
-  isGameWon: boolean;
+  gameOver: "timeFinished" | "tooManyWrongAnswers" | "gameWon" | null;
+  setModalMessage: React.Dispatch<React.SetStateAction<string | null>>;
+  openModal: () => void;
+  setGameOver: React.Dispatch<
+    React.SetStateAction<
+      "timeFinished" | "tooManyWrongAnswers" | "gameWon" | null
+    >
+  >;
 }) => {
-  const initialseconde = 1200;
+  const initialseconde = 9;
   const [seconde, setSeconde] = useState(initialseconde);
-  // const [minute, setMinute] = useState(1);
-  const [timeFinished, setTimeFinished] = useState(false);
+  const isTimeFinished = seconde === 0;
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -23,20 +28,10 @@ const Timer = ({
   };
 
   useEffect(() => {
-    if (seconde === 0) {
-      setTimeFinished(true);
-      return;
-    }
-
-    if (seconde < 0) {
-      // setMinute((minute: number) => minute - 1);
-      setSeconde(59);
-    }
-  }, [seconde]);
-
-  useEffect(() => {
-    if (timeFinished) {
-      handleTimeFinished();
+    if (isTimeFinished) {
+      setModalMessage("Le temps est écoulé !");
+      setGameOver("timeFinished");
+      openModal();
       return;
     }
     const intervalseconde = setInterval(() => {
@@ -46,15 +41,15 @@ const Timer = ({
     return () => {
       clearInterval(intervalseconde);
     };
-  }, [timeFinished, handleTimeFinished]);
+  }, [setModalMessage, openModal, setGameOver, isTimeFinished]);
 
   const progress = (seconde / initialseconde) * 100;
 
   return (
     <div className="">
-      {timeFinished || isGameOver ? (
+      {isTimeFinished || gameOver === "timeFinished" ? (
         <span>Temps écoulé !</span>
-      ) : isGameWon ? (
+      ) : gameOver === "gameWon" ? (
         <span>Bravo!</span>
       ) : (
         <div className="flex justify-between items-center h-16 px-4 bg-gray-100">
