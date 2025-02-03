@@ -1,43 +1,36 @@
 import { useCallback, useEffect, useState } from "react";
-
-interface Pokemon {
-  name: string;
-  image: string;
-}
+import { usePokemonContextApi } from "../hook/usePokemonApi";
 
 interface AlphabetProps {
-  // alreadyUsedLetters: string[];
-  // setAlreadyUsedLetters: React.Dispatch<React.SetStateAction<string[]>>;
   setCorrectLetter: React.Dispatch<React.SetStateAction<string[]>>;
   setWrongAttempts: React.Dispatch<React.SetStateAction<number>>;
   openModal: () => void;
   setModalMessage: React.Dispatch<React.SetStateAction<string | null>>;
-  setGameOver: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsGameWon: React.Dispatch<React.SetStateAction<boolean>>;
-  pokemon: Pokemon | null;
-  // isGameWon: boolean;
+  setGameOver: React.Dispatch<
+    React.SetStateAction<
+      "timeFinished" | "tooManyWrongAnswers" | "gameWon" | null
+    >
+  >;
 }
+
 const Alphabet = ({
-  // alreadyUsedLetters,
-  // setAlreadyUsedLetters,
   setCorrectLetter,
   setWrongAttempts,
   openModal,
   setModalMessage,
   setGameOver,
-  setIsGameWon,
-  pokemon,
 }: AlphabetProps) => {
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  const maxAttempts = 7;
+  const maxAttempts = 10;
   const [alreadyUsedLetters, setAlreadyUsedLetters] = useState<string[]>([]);
+  const { pokemon } = usePokemonContextApi();
 
   const handleWrongAnswer = useCallback(() => {
     setWrongAttempts((prev) => {
       const nextValue = Math.min(prev + 1, maxAttempts);
       if (nextValue === maxAttempts) {
         setModalMessage("Trop de mauvaises réponses !");
-        setGameOver(true);
+        setGameOver("tooManyWrongAnswers");
         openModal();
       }
       return nextValue;
@@ -53,22 +46,19 @@ const Alphabet = ({
           const updatedCorrectLetters = [...prev, letter];
           const maskedWord = pokemon.name
             .split("")
-            .map((l) => (updatedCorrectLetters.includes(l) ? l : "_"))
+            .map((letter: string) =>
+              updatedCorrectLetters.includes(letter) ? letter : "_"
+            )
             .join("");
 
           if (!maskedWord.includes("_")) {
             setModalMessage("Vous avez gagné !");
-            setIsGameWon(true);
+            setGameOver("gameWon");
             openModal();
           }
 
           return updatedCorrectLetters;
         });
-        // if (!getMaskedWord().includes("_")) {
-        //   setModalMessage("Vous avez gagné !");
-        //   setIsGameWon(true);
-        //   openModal();
-        // }
       } else {
         handleWrongAnswer();
       }
@@ -78,8 +68,9 @@ const Alphabet = ({
       pokemon,
       handleWrongAnswer,
       openModal,
-      setIsGameWon,
+      setGameOver,
       setModalMessage,
+      setCorrectLetter,
     ]
   );
 

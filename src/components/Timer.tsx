@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 
-const Timer = ({
-  gameOver,
-  setModalMessage,
-  openModal,
-  setGameOver,
-}: {
+interface TimerProps {
   gameOver: "timeFinished" | "tooManyWrongAnswers" | "gameWon" | null;
   setModalMessage: React.Dispatch<React.SetStateAction<string | null>>;
   openModal: () => void;
@@ -14,7 +9,14 @@ const Timer = ({
       "timeFinished" | "tooManyWrongAnswers" | "gameWon" | null
     >
   >;
-}) => {
+}
+
+const Timer = ({
+  gameOver,
+  setModalMessage,
+  openModal,
+  setGameOver,
+}: TimerProps) => {
   const initialseconde = 9;
   const [seconde, setSeconde] = useState(initialseconde);
   const isTimeFinished = seconde === 0;
