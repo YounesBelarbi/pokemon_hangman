@@ -7,16 +7,14 @@ import Timer from "./components/Timer";
 import { usePokemonContextApi } from "./hook/usePokemonApi";
 import Header from "./layout/Header";
 
-// !IIIIIImportant a corriger le problème du double lettre, exemple dracauffeu
-//!lorsque la modal est ouverte tous le reste est desactiver
 function App() {
   const [modalMessage, setModalMessage] = useState<{
     title: string;
     message: string;
   }>({ title: "", message: "" });
   const [isModalOpen, setModalOpen] = useState(false);
-  const [correctLetter, setCorrectLetter] = useState<string[]>([]); //utilisé par Alphabet + MaskedWord
-  const [wrongAttempts, setWrongAttempts] = useState(0); //utilisé par Alphabet + HangDrawing
+  const [correctLetter, setCorrectLetter] = useState<string[]>([]);
+  const [wrongAttempts, setWrongAttempts] = useState(0);
   const [gameOver, setGameOver] = useState<
     "timeFinished" | "tooManyWrongAnswers" | "gameWon" | null
   >(null);
@@ -47,14 +45,15 @@ function App() {
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       <Header />
-      <div className="flex-1">
-        <div className="container h-full mx-auto p-8">
-          <div className="grid h-full grid-cols-4 gap-10  lg:grid-cols-12 overflow-auto">
-            <div className="col-span-4  lg:col-span-4  ">
-              <div className="h-1/2 overflow-hidden rounded border border-slate-200">
+      <div className="flex-1 min-h-0">
+        <div className="container mx-auto p-3 h-full flex flex-col overflow-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6">
+            {/* Première colonne */}
+            <div className="col-span-1 sm:col-span-1 lg:col-span-4 flex flex-col gap-6">
+              <div className="w-full overflow-hidden rounded border border-slate-200">
                 <HangmanDrawing wrongAttempts={wrongAttempts} />
               </div>
-              <div className="flex flex-col  h-1/2">
+              <div className="w-full">
                 <Alphabet
                   key={pokemon ? pokemon.name : "empty"}
                   setCorrectLetter={setCorrectLetter}
@@ -65,7 +64,9 @@ function App() {
                 />
               </div>
             </div>
-            <div className="p-4 col-span-4 sm:col-span-2 lg:col-span-8 rounded bg-white shadow">
+
+            {/* Deuxième colonne */}
+            <div className="p-4 col-span-1 sm:col-span-1 lg:col-span-8 rounded bg-white shadow">
               {!gameOver && (
                 <Timer
                   gameOver={gameOver}
