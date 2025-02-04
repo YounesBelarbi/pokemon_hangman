@@ -5,7 +5,9 @@ interface AlphabetProps {
   setCorrectLetter: React.Dispatch<React.SetStateAction<string[]>>;
   setWrongAttempts: React.Dispatch<React.SetStateAction<number>>;
   openModal: () => void;
-  setModalMessage: React.Dispatch<React.SetStateAction<string | null>>;
+  setModalMessage: React.Dispatch<
+    React.SetStateAction<{ title: string; message: string }>
+  >;
   setGameOver: React.Dispatch<
     React.SetStateAction<
       "timeFinished" | "tooManyWrongAnswers" | "gameWon" | null
@@ -29,7 +31,10 @@ const Alphabet = ({
     setWrongAttempts((prev) => {
       const nextValue = Math.min(prev + 1, maxAttempts);
       if (nextValue === maxAttempts) {
-        setModalMessage("Trop de mauvaises réponses !");
+        setModalMessage({
+          title: "Perdu",
+          message: "Trop de mauvaises réponses !",
+        });
         setGameOver("tooManyWrongAnswers");
         openModal();
       }
@@ -40,8 +45,9 @@ const Alphabet = ({
   const handleLetterClick = useCallback(
     (letter: string) => {
       if (alreadyUsedLetters.includes(letter)) return;
+
       setAlreadyUsedLetters((prev) => [...prev, letter]);
-      if (pokemon && pokemon.name.includes(letter)) {
+      if (pokemon?.name.includes(letter)) {
         setCorrectLetter((prev) => {
           const updatedCorrectLetters = [...prev, letter];
           const maskedWord = pokemon.name
@@ -52,7 +58,7 @@ const Alphabet = ({
             .join("");
 
           if (!maskedWord.includes("_")) {
-            setModalMessage("Vous avez gagné !");
+            setModalMessage({ title: "Bravo", message: "Vous avez gagné !" });
             setGameOver("gameWon");
             openModal();
           }

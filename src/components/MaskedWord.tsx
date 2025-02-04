@@ -1,24 +1,20 @@
 import { useCallback } from "react";
-
-interface Pokemon {
-  name: string;
-  image: string;
-}
+import { usePokemonContextApi } from "../hook/usePokemonApi";
 
 interface MaskedWordInterface {
-  pokemon: Pokemon | null;
   correctLetter: string[];
 }
 
-const MaskedWord = ({ pokemon, correctLetter }: MaskedWordInterface) => {
-  console.log(correctLetter);
-  // const { pokemon, correctLetter, wrongAttempts } = usePokemonContext();
+const MaskedWord = ({ correctLetter }: MaskedWordInterface) => {
+  const { pokemon } = usePokemonContextApi();
 
   const getMaskedWord = useCallback(() => {
     if (pokemon) {
       return pokemon.name
         .split("")
-        .map((letter) => (correctLetter?.includes(letter) ? letter : "_"))
+        .map((letter: string) =>
+          correctLetter?.includes(letter) ? letter : "_"
+        )
         .join("");
     }
     return "";
