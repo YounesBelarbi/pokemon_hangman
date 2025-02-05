@@ -41,7 +41,9 @@ export default function ModalIconActionButtons({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      e.preventDefault();
+      if (!["Tab", "Enter", "ArrowRight", "ArrowLeft"].includes(e.key)) {
+        e.preventDefault();
+      }
     };
 
     if (isShowing) {
@@ -77,7 +79,7 @@ export default function ModalIconActionButtons({
                   {pokemon?.name}
                 </p>
               </div>
-              <div className="flex justify-center items-center h-52 sm:h-60 md:h-72">
+              <div className="flex justify-center items-center h-52 sm:h-60 md:h-72 border border-slate-200 mx  my-5">
                 <img
                   src={pokemon?.image}
                   alt={pokemon?.name}

@@ -6,7 +6,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-interface Pokemon {
+export interface Pokemon {
   name: string;
   image: string;
 }
@@ -25,12 +25,12 @@ interface PokemonApiContextType {
 const PokemonApiContext = createContext<PokemonApiContextType>({
   context: {},
   setContext: () => {},
-  pokemon: { name: "" },
   pokemonList: [],
   isError: false,
   isLoading: false,
   setPokemon: () => {},
   setPokemonList: () => {},
+  pokemon: null,
 });
 
 const getRefreshContext = () => {
@@ -81,11 +81,13 @@ export const PokemonApiContextProvider = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchPokemon = async () => {
-    console.log("fetching pokemon");
     setIsLoading(true);
 
     try {
-      const response = await fetch("https://pokebuildapi.fr/api/v1/pokemon");
+      // const response = await fetch("https://pokebuildapi.fr/api/v1/pokemon");
+      const response = await fetch(
+        "https://pokebuildapi.fr/api/v1/pokemon/limit/400"
+      );
       const data = await response.json();
       setPokemonList(data);
     } catch (error) {
@@ -98,12 +100,10 @@ export const PokemonApiContextProvider = ({
 
   // Fetch Pokemon data from API
   useEffect(() => {
-    console.log("useEffect fetchPokemon");
     // if (pokemonList.length === 0 && !isLoading) {
     fetchPokemon();
     // }
   }, []);
-  console.log(pokemonList);
 
   // Select a random Pokemon when the list is loaded
   useEffect(() => {
@@ -120,8 +120,6 @@ export const PokemonApiContextProvider = ({
       );
     }
   }, [pokemonList, pokemon]);
-
-  console.log(pokemon);
 
   return (
     <PokemonApiContext.Provider
