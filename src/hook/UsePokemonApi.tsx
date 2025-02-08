@@ -1,9 +1,3 @@
-// faire l'appel api
-// mettre une copie de la liste des pokemon dans le context pou dans le localstorage
-// choisir un pokemon au hasard dans la liste (et le retirer de la liste), le stocker soit dans le context soit dans le localstorage
-// dans App ??, si le pokemon est dans le localstorage, le prendre, sinon le prendre dans la liste
-// dans App ??, si la liste est vide refaire la requête pour recuperer une nouvelle liste de pokemon
-
 import { createContext, useContext, useEffect, useState } from "react";
 
 export interface Pokemon {
@@ -12,10 +6,10 @@ export interface Pokemon {
 }
 
 interface PokemonApiContextType {
-  context: any;
-  setContext: React.Dispatch<React.SetStateAction<any>>;
-  pokemon: any;
-  pokemonList: any[];
+  // context: any;
+  // setContext: React.Dispatch<React.SetStateAction<any>>;
+  pokemon: Pokemon | null;
+  pokemonList: Pokemon[];
   isError: boolean;
   isLoading: boolean;
   setPokemon: React.Dispatch<React.SetStateAction<Pokemon | null>>;
@@ -23,8 +17,8 @@ interface PokemonApiContextType {
 }
 
 const PokemonApiContext = createContext<PokemonApiContextType>({
-  context: {},
-  setContext: () => {},
+  // context: {},
+  // setContext: () => {},
   pokemonList: [],
   isError: false,
   isLoading: false,
@@ -33,16 +27,16 @@ const PokemonApiContext = createContext<PokemonApiContextType>({
   pokemon: null,
 });
 
-const getRefreshContext = () => {
-  if (localStorage.getItem("pokemonApi") === null) {
-    localStorage.setItem("pokemonApi", JSON.stringify({}));
-  }
-};
+// const getRefreshContext = () => {
+//   if (localStorage.getItem("pokemonApi") === null) {
+//     localStorage.setItem("pokemonApi", JSON.stringify({}));
+//   }
+// };
 
 export const usePokemonContextApi = () => {
   const {
-    context,
-    setContext,
+    // context,
+    // setContext,
     pokemon,
     pokemonList,
     isError,
@@ -52,14 +46,14 @@ export const usePokemonContextApi = () => {
   } = useContext(PokemonApiContext);
 
   return {
-    context,
-    setContext: (obj: PokemonApiContextType) => {
-      setContext({ ...context, ...obj });
-    },
-    resetContext: () => {
-      localStorage.removeItem("context");
-      setContext(getRefreshContext());
-    },
+    // context,
+    // setContext: (obj: PokemonApiContextType) => {
+    //   setContext({ ...context, ...obj });
+    // },
+    // resetContext: () => {
+    //   localStorage.removeItem("context");
+    //   setContext(getRefreshContext());
+    // },
     pokemon,
     pokemonList,
     isError,
@@ -74,7 +68,7 @@ export const PokemonApiContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [context, setContext] = useState(getRefreshContext());
+  // const [context, setContext] = useState(getRefreshContext());
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
   const [isError, setIsError] = useState(false);
@@ -100,9 +94,7 @@ export const PokemonApiContextProvider = ({
 
   // Fetch Pokemon data from API
   useEffect(() => {
-    // if (pokemonList.length === 0 && !isLoading) {
     fetchPokemon();
-    // }
   }, []);
 
   // Select a random Pokemon when the list is loaded
@@ -124,8 +116,8 @@ export const PokemonApiContextProvider = ({
   return (
     <PokemonApiContext.Provider
       value={{
-        context,
-        setContext,
+        // context,
+        // setContext,
         pokemon,
         pokemonList,
         isError,
