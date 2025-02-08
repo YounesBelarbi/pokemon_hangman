@@ -1,27 +1,27 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
-import { usePokemonContextApi } from "../../hook/usePokemonApi";
+import { usePokemonContextApi } from "../../hook/UsePokemonApi";
 import Button from "./Button";
 
 interface ModalProps {
   isShowing: boolean;
   setIsShowing: (value: boolean) => void;
   message: { title: string; message: string };
-  setGameOver: React.Dispatch<
-    React.SetStateAction<
-      "timeFinished" | "tooManyWrongAnswers" | "gameWon" | null
-    >
-  >;
+  // setGameOver: React.Dispatch<
+  //   React.SetStateAction<
+  //     "timeFinished" | "tooManyWrongAnswers" | "gameWon" | null
+  //   >
+  // >;
 }
 
 export default function ModalIconActionButtons({
   isShowing,
   setIsShowing,
   message,
-  setGameOver,
-}: ModalProps) {
+}: // setGameOver,
+ModalProps) {
   const pokemon = usePokemonContextApi().pokemon;
-
+  const focusRef = useRef<HTMLButtonElement>(null);
   //pour permettre de fermer le modal en cliquant en dehors
   // const wrapperRef = useRef<HTMLDivElement>(null);
   // useEffect(() => {
@@ -40,6 +40,7 @@ export default function ModalIconActionButtons({
   // }, [wrapperRef, setIsShowing]);
 
   useEffect(() => {
+    focusRef.current?.focus();
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!["Tab", "Enter", "ArrowRight", "ArrowLeft"].includes(e.key)) {
         e.preventDefault();
@@ -87,7 +88,11 @@ export default function ModalIconActionButtons({
                 />
               </div>
               <div className="flex justify-center gap-2 mt-4">
-                <Button handleClick={(e) => handleButtonClick(e)} text="Oui" />
+                <Button
+                  ref={focusRef}
+                  handleClick={(e) => handleButtonClick(e)}
+                  text="Oui"
+                />
                 <Button handleClick={(e) => handleButtonClick(e)} text="Non" />
               </div>
             </div>
