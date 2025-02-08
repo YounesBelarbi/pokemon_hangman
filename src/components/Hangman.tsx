@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { usePokemonContextApi } from "../hook/UsePokemonApi";
-import Header from "../layout/Header";
 import Alphabet from "./Alphabet";
 import HangmanDrawing from "./HangmanDrawing";
 import MaskedWord from "./MaskedWord";
@@ -35,8 +34,7 @@ const Hangman = () => {
   if (isError) return <p>Une erreur s'est produite.</p>;
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
-      <Header />
+    <>
       <div className="flex-1 min-h-0">
         <div className="container mx-auto p-3 h-full flex flex-col overflow-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6">
@@ -81,7 +79,7 @@ const Hangman = () => {
         setIsShowing={closeModal}
         setGameOver={setGameOver}
       />
-    </div>
+    </>
   );
 };
 
